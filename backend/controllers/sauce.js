@@ -27,30 +27,34 @@ const fs = require('fs')
       ...sauceObject,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, 
     });
-
-    sauce.save()
+    
+    if (sauce.userId !== req.auth.userId) {
+      res.status(400).json({error:'Unauthorized Creation'});
+    }else{
+      sauce.save()
       .then(() => res.status(201).json({ message: 'Sauce save'}))
       .catch(error => res.status(400).json({ error }));
+    }
   };
 //////////////////////////////////////////////////
 
 //////////////// Modify One Sauce ////////////////
 
   exports.modifySauce = (req, res, next) => {
-    /*
-    if (sauce.userId !== req.auth.userId) {
-      res.status(400).json({error:'Unauthorized modification'});
-    }*/
+   
       const sauceObject = req.file ?
         {
           ...JSON.parse(req.body.sauce),
           imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-        } : { ...req.body };
-      //else{}
+        } : { ...req.body }; 
+      
+      if (sauceObject.userId !== req.auth.userId) {
+        res.status(400).json({error:'Unauthorized modification'});
+      }else{
       Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Sauce modify'}))
         .catch(error => res.status(400).json({ error }));
-    
+      }  
   };
 //////////////////////////////////////////////////
 
@@ -58,8 +62,6 @@ const fs = require('fs')
   exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
       .then((sauce) =>{
-        console.log(sauce)
-        console.log(req.auth)
         if (sauce.userId !== req.auth.userId) {
           res.status(400).json({error: 'Unauthorized suppression'});
         }else{
