@@ -21,8 +21,8 @@ const User = require('../models/User');
 //////////////////////////////////////////////////
 
 /////////////////// Login ///////////////////////
-require('dotenv').config();
-const TOKEN = process.env.TOKEN;
+  require('dotenv').config();
+  const TOKEN = process.env.TOKEN;
 
   exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })

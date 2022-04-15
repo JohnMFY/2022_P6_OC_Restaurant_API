@@ -8,11 +8,11 @@ const saucesRoutes = require('./routes/sauce')
 const app = express();
 app.use(express.json());
 
-/*
 const helmet = require("helmet");
+
+//app.use(helmet({ crossOriginEmbedderPolicy: false }));
+//app.use(helmet.crossOriginOpenerPolicy({ policy: "unsafe-none" }));
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-app.use(helmet());
-*/
 
 //// Connection to MongoDB with ENV variable ////
   require('dotenv').config();
