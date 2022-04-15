@@ -12,7 +12,6 @@ const fs = require('fs')
 //////////////// Get One Sauce ////////////////
   exports.getOneSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
-
     .then((sauce) => {res.status(200).json(sauce);})
     .catch((error) => {res.status(404).json({error: error});});
   };
@@ -27,7 +26,7 @@ const fs = require('fs')
       ...sauceObject,
       imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, 
     });
-    
+    // SECURITY CHECK //
     if (sauce.userId !== req.auth.userId) {
       res.status(400).json({error:'Unauthorized Creation'});
     }else{
@@ -41,19 +40,19 @@ const fs = require('fs')
 //////////////// Modify One Sauce ////////////////
 
   exports.modifySauce = (req, res, next) => {
-   
       const sauceObject = req.file ?
         {
           ...JSON.parse(req.body.sauce),
           imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
         } : { ...req.body }; 
-      
+
+      // SECURITY CHECK //
       if (sauceObject.userId !== req.auth.userId) {
         res.status(400).json({error:'Unauthorized modification'});
       }else{
-      Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
+        Sauce.updateOne({ _id: req.params.id }, { ...sauceObject, _id: req.params.id })
         .then(() => res.status(200).json({ message: 'Sauce modify'}))
-        .catch(error => res.status(400).json({ error }));
+        .catch(error => res.status(400).json({ error }));  
       }  
   };
 //////////////////////////////////////////////////
@@ -61,19 +60,21 @@ const fs = require('fs')
 /////////////// Delete a sauce //////////////////
   exports.deleteSauce = (req, res, next) => {
     Sauce.findOne({_id: req.params.id})
-      .then((sauce) =>{
-        if (sauce.userId !== req.auth.userId) {
-          res.status(400).json({error: 'Unauthorized suppression'});
-        }else{
-          const filename = sauce.imageUrl.split('/images/')[1];
-          fs.unlink(`images/${filename}`, () => {
-            Sauce.deleteOne({ _id: req.params.id })
-              .then(() => res.status(200).json({ message: 'Sauce deleted' }))
-              .catch(error => res.status(400).json({ error }));
-          });
-        }
-      })
-      .catch(error => res.status(500).json({ error }));
+    .then((sauce) =>{
+
+      // SECURITY CHECK //
+      if (sauce.userId !== req.auth.userId) {
+        res.status(400).json({error: 'Unauthorized suppression'});
+      }else{
+        const filename = sauce.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${filename}`, () => {
+          Sauce.deleteOne({ _id: req.params.id })
+          .then(() => res.status(200).json({ message: 'Sauce deleted' }))
+          .catch(error => res.status(400).json({ error }));
+        });
+      }
+    })
+    .catch(error => res.status(500).json({ error }));
   };
 //////////////////////////////////////////////////
 
@@ -82,7 +83,8 @@ const fs = require('fs')
   exports.likeSauce = (req, res, next) => {
     switch(req.body.like){
 
-      case 0 :// check for like and dislike of userId and if one remove the like and the userIdLike/Dislike of the array
+      // check for like and dislike from the user, if one remove the Like/Dislike and the userId from usersLike/usersDislike array
+      case 0 :
         Sauce.findOne({ _id: req.params.id }) 
           .then((sauce)=>{
             if (sauce.usersLiked.includes(req.body.userId))
@@ -107,7 +109,8 @@ const fs = require('fs')
           .catch(error => res.status(404).json({ error }));
       break;
 
-      case 1: // Like : add a like associate to the userId and the userId in the array userLiked
+      // LIKE: add a like on the sauce and the userId in the usersLiked array   
+      case 1: 
         Sauce.updateOne({_id: req.params.id},
           {
           $inc:{likes: 1},
@@ -117,7 +120,8 @@ const fs = require('fs')
         .catch(error => res.status(400).json({ error }));
       break; 
 
-      case -1: // Dislike : add a Dislike associate to the userId and the userId in the array userDisliked
+      // DISLIKE: add a dislike on the sauce and the userId in the usersDisliked array    
+      case -1: 
         Sauce.updateOne({_id: req.params.id},
           {
           $inc:{dislikes: 1},

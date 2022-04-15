@@ -8,8 +8,11 @@ const saucesRoutes = require('./routes/sauce')
 const app = express();
 app.use(express.json());
 
-//const helmet = require("helmet");
-//app.use(helmet());
+/*
+const helmet = require("helmet");
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+app.use(helmet());
+*/
 
 //// Connection to MongoDB with ENV variable ////
   require('dotenv').config();
@@ -34,7 +37,6 @@ app.use(express.json());
 //////////////////////////////////////////////////
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
 app.use('/api/auth', userRoutes);
 app.use('/api/sauces', saucesRoutes);
 module.exports = app;
