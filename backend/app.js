@@ -8,12 +8,6 @@ const saucesRoutes = require('./routes/sauce')
 const app = express();
 app.use(express.json());
 
-const helmet = require("helmet");
-
-//app.use(helmet({ crossOriginEmbedderPolicy: false }));
-//app.use(helmet.crossOriginOpenerPolicy({ policy: "unsafe-none" }));
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
-
 //// Connection to MongoDB with ENV variable ////
   require('dotenv').config();
 
@@ -25,6 +19,11 @@ app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
   { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB OK'))
   .catch(() => console.log('KO MongoDB'));
+//////////////////////////////////////////////////
+
+///////////////////// HELMET /////////////////////
+const helmet = require("helmet");
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 //////////////////////////////////////////////////
 
 ///////////////// Cross-Origin /////////////////
