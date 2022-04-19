@@ -38,7 +38,6 @@ const fs = require('fs')
 //////////////////////////////////////////////////
 
 //////////////// Modify One Sauce ////////////////
-
   exports.modifySauce = (req, res, next) => {
       const sauceObject = req.file ?
         {
@@ -79,7 +78,6 @@ const fs = require('fs')
 //////////////////////////////////////////////////
 
 ////////////// Like & dislike sauce //////////////
-
   exports.likeSauce = (req, res, next) => {
     switch(req.body.like){
 
@@ -133,5 +131,4 @@ const fs = require('fs')
      
     }
   }
-
 //////////////////////////////////////////////////

@@ -22,8 +22,8 @@ app.use(express.json());
 //////////////////////////////////////////////////
 
 ///////////////////// HELMET /////////////////////
-const helmet = require("helmet");
-app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+  const helmet = require("helmet");
+  app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 //////////////////////////////////////////////////
 
 ///////////////// Cross-Origin /////////////////

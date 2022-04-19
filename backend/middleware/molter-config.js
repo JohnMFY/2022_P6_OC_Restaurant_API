@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
   destination: (req, file, callback) => {
     callback(null, 'images');
   },
-
 //change the name of the picture
   filename: (req, file, callback) => { 
     const name = file.originalname.split(' ').join('_'); //replace the space with underscore
